@@ -417,7 +417,7 @@ class PronterWindow(MainWindow, pronsole.pronsole):
     @property
     def bgcolor(self):
         if getattr(self.settings, "dark_theme", False):
-            return wx.Colour("#1E1E1E")
+            return "#1E1E1E"
         return (wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)
                 if self.settings.bgcolor == 'auto'
                 else self.settings.bgcolor)
@@ -425,19 +425,20 @@ class PronterWindow(MainWindow, pronsole.pronsole):
     @property
     def fgcolor(self):
         if getattr(self.settings, "dark_theme", False):
-            return wx.Colour("#E6E6E6")
-        return wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT)
+            return "#E6E6E6"
+        # Keep consistent string output when possible
+        return wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT).GetAsString(flags=wx.C2S_HTML_SYNTAX)
 
     def _theme_palette(self):
         if not getattr(self.settings, "dark_theme", False):
             return None
         return {
-            "frame_bg": wx.Colour("#1E1E1E"),
-            "panel_bg": wx.Colour("#1E1E1E"),
-            "ctrl_bg": wx.Colour("#252526"),
-            "ctrl_bg_alt": wx.Colour("#2D2D30"),
-            "fg": wx.Colour("#E6E6E6"),
-            "muted_fg": wx.Colour("#C8C8C8"),
+            "frame_bg": "#1E1E1E",
+            "panel_bg": "#1E1E1E",
+            "ctrl_bg": "#252526",
+            "ctrl_bg_alt": "#2D2D30",
+            "fg": "#E6E6E6",
+            "muted_fg": "#C8C8C8",
         }
 
     def apply_theme(self):
