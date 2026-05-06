@@ -49,8 +49,12 @@ class ZButtons(FocusCanvas):
         # Remember the last clicked value, so we can repeat when spacebar pressed
         self.lastValue = None
 
-        self.bgcolor = wx.Colour()
-        self.bgcolor.Set(bgcolor)
+        # bgcolor can be a hex string ("#RRGGBB") or a wx.Colour, depending on caller.
+        if isinstance(bgcolor, wx.Colour):
+            self.bgcolor = wx.Colour(bgcolor)
+        else:
+            self.bgcolor = wx.Colour()
+            self.bgcolor.Set(bgcolor)
         self.bgcolormask = wx.Colour(self.bgcolor.Red(), self.bgcolor.Green(), self.bgcolor.Blue(), 128)
 
         # On MS Windows super(style=WANTS_CHARS) prevents tab cycling

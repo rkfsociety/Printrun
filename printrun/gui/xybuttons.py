@@ -97,8 +97,12 @@ class XYButtons(FocusCanvas):
         self.lastMove = None
         self.lastCorner = None
 
-        self.bgcolor = wx.Colour()
-        self.bgcolor.Set(bgcolor)
+        # bgcolor can be a hex string ("#RRGGBB") or a wx.Colour, depending on caller.
+        if isinstance(bgcolor, wx.Colour):
+            self.bgcolor = wx.Colour(bgcolor)
+        else:
+            self.bgcolor = wx.Colour()
+            self.bgcolor.Set(bgcolor)
         self.bgcolormask = wx.Colour(self.bgcolor.Red(), self.bgcolor.Green(), self.bgcolor.Blue(), 128)
 
         super().__init__(parent, ID, size=self.bg_bmp.GetPreferredLogicalSizeFor(parent))
