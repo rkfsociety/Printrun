@@ -20,6 +20,16 @@ import wx
 from printrun.utils import imagefile
 
 
+def _color_is_dark(color) -> bool:
+    try:
+        c = wx.Colour(color) if not isinstance(color, wx.Colour) else color
+        r, g, b = c.Red(), c.Green(), c.Blue()
+        # Relative luminance
+        return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 140
+    except Exception:
+        return False
+
+
 def make_button(parent, label, callback, tooltip, container = None, size = wx.DefaultSize, style = 0):
     button = wx.Button(parent, -1, label, style = style, size = size)
     button.Bind(wx.EVT_BUTTON, callback)
@@ -35,7 +45,8 @@ def make_custom_button(root, parentpanel, i, style = 0):
     btn = make_button(parentpanel, i.label, root.process_button,
                       i.tooltip, style = style)
     btn.SetBackgroundColour(i.background)
-    btn.SetForegroundColour("black")
+    # Keep good contrast regardless of theme/background.
+    btn.SetForegroundColour("white" if _color_is_dark(i.background) else "black")
     btn.properties = i
     root.btndict[i.command] = btn
     root.printerControls.append(btn)

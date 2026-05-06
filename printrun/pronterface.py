@@ -452,41 +452,28 @@ class PronterWindow(MainWindow, pronsole.pronsole):
         if not palette:
             return
 
-        def should_override_bg(w: wx.Window) -> bool:
-            try:
-                bg = w.GetBackgroundColour()
-            except Exception:
-                return False
-            # If a widget has a custom non-default background already,
-            # keep it (e.g. temperature set buttons, warning highlights).
-            if bg.IsOk() and bg != wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE):
-                # Panels often have inherited/non-meaningful colors; still override them.
-                return isinstance(w, (wx.Panel, wx.ScrolledWindow, wx.SplitterWindow, wx.Notebook))
-            return True
-
         def apply_to(w: wx.Window):
             try:
                 if isinstance(w, (wx.Panel, wx.ScrolledWindow, wx.SplitterWindow, wx.Notebook)):
-                    if should_override_bg(w):
-                        w.SetBackgroundColour(palette["panel_bg"])
+                    w.SetBackgroundColour(palette["panel_bg"])
                     w.SetForegroundColour(palette["fg"])
                 elif isinstance(w, (wx.TextCtrl, wx.ComboBox, wx.Choice, wx.ListBox, wx.ListCtrl, wx.TreeCtrl)):
-                    if should_override_bg(w):
-                        w.SetBackgroundColour(palette["ctrl_bg"])
+                    w.SetBackgroundColour(palette["ctrl_bg"])
                     w.SetForegroundColour(palette["fg"])
                 elif isinstance(w, (wx.SpinCtrl, wx.SpinCtrlDouble)):
-                    if should_override_bg(w):
-                        w.SetBackgroundColour(palette["ctrl_bg"])
+                    w.SetBackgroundColour(palette["ctrl_bg"])
                     w.SetForegroundColour(palette["fg"])
                 elif isinstance(w, (wx.StaticText, wx.StaticBox)):
                     w.SetForegroundColour(palette["fg"])
                 elif isinstance(w, wx.Button):
-                    if should_override_bg(w):
+                    # Respect explicit colored buttons (e.g. custom controls),
+                    # but make sure text is readable in dark theme.
+                    bg = w.GetBackgroundColour()
+                    if not bg.IsOk() or bg == wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE):
                         w.SetBackgroundColour(palette["ctrl_bg_alt"])
                     w.SetForegroundColour(palette["fg"])
                 else:
-                    if should_override_bg(w):
-                        w.SetBackgroundColour(palette["panel_bg"])
+                    w.SetBackgroundColour(palette["panel_bg"])
                     w.SetForegroundColour(palette["fg"])
             except Exception:
                 pass

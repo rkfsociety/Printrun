@@ -301,8 +301,12 @@ def add_extra_controls(self, root, parentpanel, extra_buttons = None, mini_mode 
     root.edist = wx.SpinCtrlDouble(esettingspanel, -1, initial = root.settings.last_extrusion, min = 0, max = 1000, size = (135, -1))
     root.edist.SetDigits(1)
     root.edist.Bind(wx.EVT_SPINCTRLDOUBLE, root.setfeeds)
-    root.edist.SetBackgroundColour((225, 200, 200))
-    root.edist.SetForegroundColour("black")
+    if getattr(root.settings, "dark_theme", False):
+        root.edist.SetBackgroundColour("#252526")
+        root.edist.SetForegroundColour("#E6E6E6")
+    else:
+        root.edist.SetBackgroundColour((225, 200, 200))
+        root.edist.SetForegroundColour("black")
     root.edist.Bind(wx.EVT_TEXT, root.setfeeds)
     add("edist_label", wx.StaticText(esettingspanel, -1, _("Length:")), container = esettingssizer, flag = wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT | wx.RIGHT | wx.LEFT, border = 5)
     add("edist_val", root.edist, container = esettingssizer, flag = wx.ALIGN_CENTER | wx.RIGHT, border = 5)
@@ -314,8 +318,12 @@ def add_extra_controls(self, root, parentpanel, extra_buttons = None, mini_mode 
         root.efeedc.SetDigits(1)
         root.efeedc.Bind(wx.EVT_SPINCTRLDOUBLE, root.setfeeds)
         root.efeedc.SetToolTip(wx.ToolTip(_("Extrude / Retract speed (mm/min)")))
-        root.efeedc.SetBackgroundColour((225, 200, 200))
-        root.efeedc.SetForegroundColour("black")
+        if getattr(root.settings, "dark_theme", False):
+            root.efeedc.SetBackgroundColour("#252526")
+            root.efeedc.SetForegroundColour("#E6E6E6")
+        else:
+            root.efeedc.SetBackgroundColour((225, 200, 200))
+            root.efeedc.SetForegroundColour("black")
         root.efeedc.Bind(wx.EVT_TEXT, root.setfeeds)
         add("efeed_val", root.efeedc, container = esettingssizer, flag = wx.ALIGN_CENTER | wx.RIGHT, border = 5)
         add("efeed_label", wx.StaticText(esettingspanel, -1, _("Speed:")), container = esettingssizer, flag = wx.ALIGN_LEFT)
@@ -423,6 +431,10 @@ class ControlsSizer(wx.GridBagSizer):
         root.zfeedc.Bind(wx.EVT_SPINCTRL, root.setfeeds)
         root.xyfeedc.Bind(wx.EVT_TEXT, root.setfeeds)
         root.zfeedc.Bind(wx.EVT_TEXT, root.setfeeds)
+    if getattr(root.settings, "dark_theme", False):
+        root.zfeedc.SetBackgroundColour("#252526")
+        root.zfeedc.SetForegroundColour("#E6E6E6")
+    else:
         root.zfeedc.SetBackgroundColour((180, 255, 180))
         root.zfeedc.SetForegroundColour("black")
 
