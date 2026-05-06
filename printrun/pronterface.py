@@ -418,9 +418,11 @@ class PronterWindow(MainWindow, pronsole.pronsole):
     def bgcolor(self):
         if getattr(self.settings, "dark_theme", False):
             return "#1E1E1E"
-        return (wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)
-                if self.settings.bgcolor == 'auto'
-                else self.settings.bgcolor)
+        if self.settings.bgcolor == 'auto':
+            # Some controls expect a string color (e.g. XYButtons),
+            # so normalize system colors to HTML hex.
+            return wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME).GetAsString(flags=wx.C2S_HTML_SYNTAX)
+        return self.settings.bgcolor
 
     @property
     def fgcolor(self):
