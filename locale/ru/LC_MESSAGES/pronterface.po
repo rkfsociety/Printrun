@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pronterface\n"
+"POT-Creation-Date: 2025-02-18 14:11+0100\n"
+"PO-Revision-Date: 2026-05-06 15:02+0200\n"
+"Last-Translator: rkfsociety\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Cursor\n"
+
+# Русская локализация Pronterface.
+# По формату — как остальные переводы в ./locale/*/LC_MESSAGES/pronterface.po
+# Если для строки msgstr пустой, будет показан английский текст.
+
+msgid "Pronterface"
+msgstr "Pronterface"
+
+msgid "Not connected to printer."
+msgstr "Не подключено к принтеру."
+
+msgid "Edit Settings"
+msgstr "Настройки"
+
+msgid "Printer Settings"
+msgstr "Настройки принтера"
+
+msgid "User Interface"
+msgstr "Интерфейс"
+
+msgid "Viewer"
+msgstr "Просмотр"
+
+msgid "Colors"
+msgstr "Цвета"
+
+msgid "External Commands"
+msgstr "Внешние команды"
+
+msgid "Interface mode"
+msgstr "Режим интерфейса"
+
+msgid "Controls mode"
+msgstr "Режим управления"
+
+msgid "Standard"
+msgstr "Стандартный"
+
+msgid "Compact"
+msgstr "Компактный"
+
+msgid "Mini"
+msgstr "Мини"
+
+msgid "Dark theme"
+msgstr "Тёмная тема"
+
+msgid "Use a dark color theme for the Pronterface interface"
+msgstr "Использовать тёмную цветовую тему для интерфейса Pronterface"
+
+msgid "Commands"
+msgstr "Команды"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Plater"
+msgstr "Плейтер"
+
+msgid "G-Code Plater"
+msgstr "Плейтер G-Code"
+
+msgid "Motors off"
+msgstr "Выключить моторы"
+
+msgid "Extrude"
+msgstr "Экструзия"
+
+msgid "Reverse"
+msgstr "Ретракт"
+
+msgid "Heat:"
+msgstr "Нагрев:"
+
+msgid "Bed:"
+msgstr "Стол:"
+
+msgid "Off"
+msgstr "Выкл"
+
+msgid "Set"
+msgstr "Уст."
+
+msgid "Print speed:"
+msgstr "Скорость печати:"
+
+msgid "Print flow:"
+msgstr "Поток:"
+

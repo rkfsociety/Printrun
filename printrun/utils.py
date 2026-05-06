@@ -26,6 +26,8 @@ import logging
 from pathlib import Path
 from typing import Union
 
+from .i18n import ensure_compiled_locale
+
 DATADIR = os.path.join(sys.prefix, 'share')
 
 
@@ -49,6 +51,7 @@ def install_locale(domain):
         gettext.install(domain, './locale')
     else:
         if os.path.exists('./locale'):
+            ensure_compiled_locale(domain, Path("./locale"), lang[0] if lang else None)
             translation = gettext.translation(domain, './locale',
                                               languages=[lang[0]], fallback= True)
         else:

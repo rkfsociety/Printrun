@@ -302,6 +302,8 @@ class PronterWindow(MainWindow, pronsole.pronsole):
             self.panel.Layout()
             if self.fgcode:
                 self.start_viz_thread()
+        # Apply theme after UI was (re)built.
+        self.apply_theme()
         self.ui_ready = True
         self.settings.monitor = temp_monitor
         self.commandbox.history = read_history_from(self.history_file)
@@ -414,9 +416,106 @@ class PronterWindow(MainWindow, pronsole.pronsole):
 
     @property
     def bgcolor(self):
+        if getattr(self.settings, "dark_theme", False):
+            return wx.Colour("#1E1E1E")
         return (wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)
                 if self.settings.bgcolor == 'auto'
                 else self.settings.bgcolor)
+
+    @property
+    def fgcolor(self):
+        if getattr(self.settings, "dark_theme", False):
+            return wx.Colour("#E6E6E6")
+        return wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT)
+
+    def _theme_palette(self):
+        if not getattr(self.settings, "dark_theme", False):
+            return None
+        return {
+            "frame_bg": wx.Colour("#1E1E1E"),
+            "panel_bg": wx.Colour("#1E1E1E"),
+            "ctrl_bg": wx.Colour("#252526"),
+            "ctrl_bg_alt": wx.Colour("#2D2D30"),
+            "fg": wx.Colour("#E6E6E6"),
+            "muted_fg": wx.Colour("#C8C8C8"),
+        }
+
+    def apply_theme(self):
+        """
+        Best-effort theming for wx controls.
+        We keep existing explicit highlight colors (e.g. custom buttons).
+        """
+        palette = self._theme_palette()
+        if not palette:
+            return
+
+        def should_override_bg(w: wx.Window) -> bool:
+            try:
+                bg = w.GetBackgroundColour()
+            except Exception:
+                return False
+            # If a widget has a custom non-default background already,
+            # keep it (e.g. temperature set buttons, warning highlights).
+            if bg.IsOk() and bg != wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE):
+                # Panels often have inherited/non-meaningful colors; still override them.
+                return isinstance(w, (wx.Panel, wx.ScrolledWindow, wx.SplitterWindow, wx.Notebook))
+            return True
+
+        def apply_to(w: wx.Window):
+            try:
+                if isinstance(w, (wx.Panel, wx.ScrolledWindow, wx.SplitterWindow, wx.Notebook)):
+                    if should_override_bg(w):
+                        w.SetBackgroundColour(palette["panel_bg"])
+                    w.SetForegroundColour(palette["fg"])
+                elif isinstance(w, (wx.TextCtrl, wx.ComboBox, wx.Choice, wx.ListBox, wx.ListCtrl, wx.TreeCtrl)):
+                    if should_override_bg(w):
+                        w.SetBackgroundColour(palette["ctrl_bg"])
+                    w.SetForegroundColour(palette["fg"])
+                elif isinstance(w, (wx.SpinCtrl, wx.SpinCtrlDouble)):
+                    if should_override_bg(w):
+                        w.SetBackgroundColour(palette["ctrl_bg"])
+                    w.SetForegroundColour(palette["fg"])
+                elif isinstance(w, (wx.StaticText, wx.StaticBox)):
+                    w.SetForegroundColour(palette["fg"])
+                elif isinstance(w, wx.Button):
+                    if should_override_bg(w):
+                        w.SetBackgroundColour(palette["ctrl_bg_alt"])
+                    w.SetForegroundColour(palette["fg"])
+                else:
+                    if should_override_bg(w):
+                        w.SetBackgroundColour(palette["panel_bg"])
+                    w.SetForegroundColour(palette["fg"])
+            except Exception:
+                pass
+
+            try:
+                for child in w.GetChildren():
+                    apply_to(child)
+            except Exception:
+                pass
+
+        try:
+            self.SetBackgroundColour(palette["frame_bg"])
+            self.SetForegroundColour(palette["fg"])
+            self.panel.SetBackgroundColour(palette["panel_bg"])
+            self.panel.SetForegroundColour(palette["fg"])
+        except Exception:
+            pass
+
+        apply_to(self)
+
+        try:
+            if hasattr(self, "statusbar") and self.statusbar:
+                self.statusbar.SetBackgroundColour(palette["panel_bg"])
+                self.statusbar.SetForegroundColour(palette["muted_fg"])
+        except Exception:
+            pass
+
+        try:
+            self.Refresh()
+            self.Update()
+        except Exception:
+            pass
 
     #  --------------------------------------------------------------
     #  Main interface actions
@@ -1089,6 +1188,7 @@ Printrun. If not, see <http://www.gnu.org/licenses/>."""
         self.settings._add(ComboSetting("uimode", _("Standard"), [_("Standard"), _("Compact"), ], _("Interface mode"), _("Standard interface is a one-page, three columns layout with controls/visualization/log\nCompact mode is a one-page, two columns layout with controls + log/visualization"), "UI"), self.on_ui_reload)
         # self.settings._add(ComboSetting("uimode", _("Standard"), [_("Standard"), _("Compact"), _("Tabbed"), _("Tabbed with platers")], _("Interface mode"), _("Standard interface is a one-page, three columns layout with controls/visualization/log\nCompact mode is a one-page, two columns layout with controls + log/visualization"), "UI"), self.on_ui_reload)
         self.settings._add(ComboSetting("controlsmode", _("Standard"), (_("Standard"), _("Mini"), ), _("Controls mode"), _("Standard controls include all controls needed for printer setup and calibration, while Mini controls are limited to the ones needed for daily printing"), "UI"), self.on_ui_reload)
+        self.settings._add(BooleanSetting("dark_theme", True, _("Dark theme"), _("Use a dark color theme for the Pronterface interface"), "UI"), self.on_ui_reload)
         self.settings._add(BooleanSetting("slic3rintegration", False, _("Enable Slic3r integration"), _("Add a menu to select Slic3r profiles directly from Pronterface"), "UI"), self.on_ui_reload)
         self.settings._add(BooleanSetting("slic3rupdate", False, _("Update Slic3r default presets"), _("When selecting a profile in Slic3r integration menu, also save it as the default Slic3r preset"), "UI"))
         self.settings._add(ComboSetting("mainviz", "3D", ("2D", "3D", _("None")), _("Main visualization"), _("Select visualization for main window."), "Viewer", 4*get_space('settings')), self.on_ui_reload)
